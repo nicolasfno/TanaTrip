@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TanaTrip — Maquette de l'app</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Special+Elite&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#181410;
+    --ink-soft:#5f5338;
+    --paper:#e9dfc6;
+    --paper-2:#e2d6b8;
+    --paper-3:#d8cba8;
+    --line:#cbbc98;
+    --red:#b3121b;
+    --red-deep:#8a0d14;
+    --gold:#8a6d1f;
+    --green:#2f6b3a;
+    --night:#0a0c14;
+    --night-2:#12141f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Special Elite","Courier New",monospace;
+    background:var(--night);
+    color:var(--ink);
+    min-height:100dvh;
+    padding:0 0 90px;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(120% 80% at 20% 0%, rgba(179,18,27,.10), transparent 55%),
+      radial-gradient(120% 90% at 90% 100%, rgba(138,109,31,.10), transparent 55%),
+      linear-gradient(180deg,#0a0c14,#0d0f18 60%,#0a0c14);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .jp{font-family:"Noto Serif JP",serif}
+  .pf{font-family:"Playfair Display",Georgia,serif}
+
+  /* ---------------- EN-TÊTE DE LA MAQUETTE ---------------- */
+  .page-head{
+    position:relative;z-index:2;max-width:1180px;margin:0 auto;
+    padding:64px 26px 30px;
+  }
+  .kicker{
+    color:#d8c49a;font-size:.68rem;letter-spacing:.44em;text-transform:uppercase;
+    margin-bottom:20px;display:flex;align-items:center;gap:14px;
+  }
+  .kicker::before{content:"";width:38px;height:1px;background:#8a7a55}
+  h1.page-title{
+    font-family:"Playfair Display",Georgia,serif;font-weight:800;color:#f6efdb;
+    font-size:clamp(2rem,5.4vw,3.4rem);line-height:.98;letter-spacing:-.02em;
+    max-width:16ch;
+  }
+  h1.page-title em{font-style:italic;color:#e9b6ba}
+  .page-sub{
+    color:#b9b3a2;font-size:.86rem;line-height:1.9;max-width:60ch;margin-top:20px;
+  }
+  .page-sub b{color:#f6efdb;font-weight:400}
+  .legend{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;
+  }
+  .legend span{
+    font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#d8c49a;
+    border:1px solid rgba(216,196,154,.35);padding:7px 12px;border-radius:999px;
+    background:rgba(255,255,255,.02);
+  }
+
+  /* ---------------- GALERIE DE TÉLÉPHONES ---------------- */
+  .phones{
+    position:relative;z-index:2;max-width:1180px;margin:10px auto 0;
+    padding:20px 26px 40px;
+    display:flex;flex-wrap:wrap;gap:44px 40px;justify-content:center;align-items:flex-start;
+  }
+  .device{
+    width:392px;max-width:100%;flex:0 0 auto;
+  }
+  .frame{
+    position:relative;
+    width:100%;
+    padding:12px;
+    border-radius:46px;
+    background:linear-gradient(160deg,#23242e,#111219 55%,#1c1d26);
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,.95),
+      0 0 0 1px rgba(255,255,255,.06),
+      inset 0 0 0 2px rgba(255,255,255,.03),
+      inset 0 2px 3px rgba(255,255,255,.07);
+  }
+  .notch{
+    position:absolute;top:22px;left:50%;transform:translateX(-50%);
+    width:112px;height:26px;border-radius:16px;background:#050609;z-index:6;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .notch::after{
+    content:"";position:absolute;right:16px;top:50%;transform:translateY(-50%);
+    width:8px;height:8px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #2b3a55, #0a0f1a 70%);
+    box-shadow:inset 0 0 0 1px rgba(120,150,200,.35);
+  }
+  .screen{
+    position:relative;
+    height:786px;
+    border-radius:36px;
+    overflow:hidden;
+    background:linear-gradient(180deg,var(--paper),var(--paper-2));
+    display:flex;flex-direction:column;
+  }
+  .screen::before{
+    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.09;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  }
+  .statusbar{
+    position:relative;z-index:4;flex:0 0 auto;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 26px 6px;font-size:.66rem;letter-spacing:.06em;color:var(--ink);
+    font-family:"Special Elite",monospace;
+  }
+  .statusbar .sb-icons{display:flex;align-items:center;gap:6px}
+  .statusbar svg{width:15px;height:11px}
+  .screen-body{
+    position:relative;z-index:3;flex:1 1 auto;overflow-y:auto;overflow-x:hidden;
+    padding:6px 22px 20px;
+    scrollbar-width:thin;scrollbar-color:#b9a980 transparent;
+  }
+  .screen-body::-webkit-scrollbar{width:6px}
+  .screen-body::-webkit-scrollbar-thumb{background:#b9a980;border-radius:4px}
+
+  /* ---------------- BARRE D'ONGLETS ---------------- */
+  .tabbar{
+    position:relative;z-index:5;flex:0 0 auto;
+    display:grid;grid-template-columns:repeat(6,1fr);
+    background:rgba(233,223,198,.92);
+    border-top:1px solid var(--line);
+    backdrop-filter:blur(6px);
+    box-shadow:0 -8px 20px -14px rgba(0,0,0,.5);
+  }
+  .tab{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:11px 2px 14px;color:#8a7a55;font-size:.5rem;letter-spacing:.08em;
+    text-transform:uppercase;text-decoration:none;transition:color .2s, transform .2s;
+  }
+  .tab svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round}
+  .tab:hover{color:var(--ink)}
+  .tab:active{transform:translateY(1px)}
+  .tab.active{color:var(--red)}
+  .tab.active::after{content:"";width:16px;height:2px;background:var(--red);margin-top:1px}
+
+  /* ---------------- ÉLÉMENTS DE DOSSIER ---------------- */
+  .dossier-head{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+    border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px;
+  }
+  .dossier-head h2{font-family:"Playfair Display",serif;font-size:1.05rem;font-weight:800;line-height:1.05}
+  .dossier-head .sub{font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:#6a5b3d;margin-top:5px}
+  .hanko{
+    flex:0 0 auto;width:42px;height:42px;border:2px solid var(--red);border-radius:50%;
+    color:var(--red);display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Serif JP",serif;font-weight:700;font-size:1.05rem;
+    transform:rotate(6deg);opacity:.9;
+    background:radial-gradient(circle, rgba(179,18,27,.07), transparent 70%);
+  }
+  .sec-title{
+    font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:#5f5338;
+    margin:20px 0 10px;display:flex;align-items:center;gap:10px;
+  }
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:.56rem;letter-spacing:.16em;
+    text-transform:uppercase;border:1px solid var(--line);padding:5px 9px;
+    color:#5f5338;background:rgba(255,255,255,.25);white-space:nowrap;
+  }
+  .chip.red{color:var(--red);border-color:var(--red)}
+  .chip.gold{color:var(--gold);border-color:var(--gold);background:rgba(255,210,74,.12)}
+  .chip.green{color:var(--green);border-color:var(--green)}
+
+  /* ---------------- ACCUEIL ---------------- */
+  .hero{
+    position:relative;border-radius:6px;overflow:hidden;margin:4px -22px 0;
+    height:230px;border-bottom:3px double var(--ink);
+  }
+  .hero video,.hero img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:brightness(.72) contrast(1.05) saturate(1.05);
+  }
+  .hero .shade{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(10,12,20,.35) 0%, rgba(10,12,20,.15) 40%, rgba(10,12,20,.86) 100%);
+  }
+  .hero .hero-txt{
+    position:absolute;left:22px;right:22px;bottom:16px;color:#f6efdb;
+  }
+  .hero .hero-kick{
+    font-size:.56rem;letter-spacing:.36em;text-transform:uppercase;color:#e9b6ba;margin-bottom:8px;
+  }
+  .hero h3{font-family:"Playfair Display",serif;font-weight:800;font-size:2rem;line-height:.95;letter-spacing:-.01em}
+  .hero .hero-jp{font-size:.62rem;letter-spacing:.3em;color:#d8c49a;margin-top:8px}
+
+  .countdown{
+    display:flex;align-items:baseline;gap:12px;margin:18px 0 4px;
+  }
+  .countdown .cd-num{
+    font-family:"Playfair Display",serif;font-weight:800;font-size:3.1rem;line-height:1;
+    color:var(--red);letter-spacing:-.03em;
+  }
+  .countdown .cd-lab{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:#5f5338}
+  .countdown .cd-lab b{display:block;color:var(--ink);font-weight:400;font-size:.72rem;margin-top:3px}
+
+  .members{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .avatars{display:flex}
+  .av{
+    width:38px;height:38px;border-radius:50%;border:2px solid var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Playfair Display",serif;font-weight:800;font-size:.72rem;color:#6f5f3d;
+    background:repeating-linear-gradient(45deg,#d8cba8,#d8cba8 5px,#d2c39c 5px,#d2c39c 10px);
+    margin-left:-10px;box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  .av:first-child{margin-left:0}
+  .members .m-lab{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#5f5338}
+
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .qcard{
+    border:1px solid var(--line);background:rgba(255,255,255,.3);
+    padding:12px 13px;display:flex;flex-direction:column;gap:6px;
+    text-decoration:none;color:var(--ink);transition:transform .15s, box-shadow .15s;
+  }
+  .qcard:hover{transform:translateY(-2px);box-shadow:0 10px 22px -14px rgba(0,0,0,.6)}
+  .qcard:active{transform:translateY(0) scale(.99)}
+  .qcard .q-ic{color:var(--red)}
+  .qcard .q-ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .qcard .q-t{font-size:.72rem;letter-spacing:.06em}
+  .qcard .q-d{font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#6a5b3d}
+
+  .nextevent{
+    border-left:4px solid var(--red);background:rgba(255,255,255,.32);
+    padding:12px 14px;margin-top:6px;
+  }
+  .nextevent .ne-who{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+  .nextevent .ne-what{font-size:.8rem;line-height:1.6;margin-top:5px}
+  .nextevent .ne-when{font-size:.6rem;letter-spacing:.06em;color:#6a5b3d;margin-top:6px}
+
+  /* ---------------- ITINÉRAIRE ---------------- */
+  .timeline{position:relative;margin-top:6px;padding-left:30px}
+  .timeline::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--line)}
+  .step{position:relative;padding:0 0 16px}
+  .step .dot{
+    position:absolute;left:-30px;top:2px;width:20px;height:20px;border-radius:50%;
+    border:2px solid var(--red);background:var(--paper);display:flex;align-items:center;justify-content:center;
+    font-family:"Playfair Display",serif;font-weight:800;font-size:.56rem;color:var(--red);
+  }
+  .step.done .dot{border-color:var(--green);color:var(--green)}
+  .step.soon .dot{border-color:var(--gold);color:var(--gold)}
+  .step .st-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .step .st-city{font-family:"Playfair Display",serif;font-weight:800;font-size:1rem;letter-spacing:-.01em}
+  .step .st-date{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#6a5b3d}
+  .step .st-acts{font-size:.74rem;line-height:1.7;color:#4f4630;margin-top:3px}
+  .step .st-meta{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
+
+  /* ---------------- BILLETS ---------------- */
+  .filters{display:flex;gap:8px;margin:8px 0 14px;flex-wrap:wrap}
+  .filters .f{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:6px 11px;
+    border:1px solid var(--line);color:#6a5b3d;background:rgba(255,255,255,.25);cursor:pointer;
+    font-family:"Special Elite",monospace}
+  .filters .f.on{background:var(--ink);color:#f6efdb;border-color:var(--ink)}
+
+  .ticket{
+    position:relative;display:flex;margin-bottom:14px;
+    background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.22));
+    border:1px solid var(--line);
+    filter:drop-shadow(0 8px 14px rgba(60,45,20,.18));
+  }
+  .ticket .tk-spine{flex:0 0 8px;background:var(--red)}
+  .ticket.gold .tk-spine{background:var(--gold)}
+  .ticket.green .tk-spine{background:var(--green)}
+  .ticket .tk-main{flex:1;min-width:0;padding:12px 14px}
+  .ticket .tk-kind{font-size:.54rem;letter-spacing:.24em;text-transform:uppercase;color:#6a5b3d}
+  .ticket .tk-title{font-family:"Playfair Display",serif;font-weight:800;font-size:.92rem;margin-top:3px;line-height:1.1}
+  .ticket .tk-route{font-size:.72rem;color:#4f4630;margin-top:6px;line-height:1.5}
+  .ticket .tk-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px}
+  .ticket .tk-ref{font-size:.56rem;letter-spacing:.12em;color:#6a5b3d}
+  .ticket .tk-stub{
+    flex:0 0 74px;position:relative;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:6px;
+    border-left:2px dashed var(--line);padding:10px 8px;
+  }
+  .ticket .tk-stub::before,.ticket .tk-stub::after{
+    content:"";position:absolute;left:-9px;width:16px;height:16px;border-radius:50%;
+    background:var(--paper-2);border:1px solid var(--line);
+  }
+  .ticket .tk-stub::before{top:-9px}
+  .ticket .tk-stub::after{bottom:-9px}
+  .tk-qr{
+    width:40px;height:40px;
+    background:
+      repeating-linear-gradient(90deg,var(--ink) 0 3px,transparent 3px 6px),
+      repeating-linear-gradient(0deg,var(--ink) 0 3px,var(--paper) 3px 6px);
+    box-shadow:0 0 0 3px #fff;
+  }
+  .tk-assign{display:flex;gap:4px;margin-top:6px}
+  .tk-assign .av{width:22px;height:22px;font-size:.5rem;border-width:1px;margin-left:-6px}
+  .tk-assign .av:first-child{margin-left:0}
+
+  /* ---------------- PHOTOS ---------------- */
+  .gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .shot{
+    position:relative;border:3px solid #fff;background:#fff;
+    box-shadow:0 8px 16px -10px rgba(0,0,0,.5);
+    overflow:hidden;
+  }
+  .shot:nth-child(odd){transform:rotate(-1.3deg)}
+  .shot:nth-child(even){transform:rotate(1.1deg)}
+  .shot img{display:block;width:100%;height:118px;object-fit:cover;filter:sepia(.12) contrast(1.02)}
+  .shot .cap{
+    position:absolute;left:0;right:0;bottom:0;padding:6px 7px;
+    background:linear-gradient(180deg,transparent,rgba(10,12,20,.8));
+    color:#f6efdb;font-size:.52rem;letter-spacing:.1em;
+  }
+  .upload{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    border:2px dashed var(--line);color:#6a5b3d;font-size:.66rem;letter-spacing:.14em;
+    text-transform:uppercase;padding:14px;margin-top:12px;background:rgba(255,255,255,.22);
+  }
+  .upload svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+
+  /* ---------------- CARTE ---------------- */
+  .mapwrap{
+    margin:6px -22px 0;height:300px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 30% 20%, #efe6cf, #e0d3b3 70%);
+    border-bottom:3px double var(--ink);
+  }
+  .mapwrap::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  }
+  .map-legend{
+    position:absolute;top:12px;left:14px;z-index:3;
+    font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:#6a5b3d;
+    background:rgba(233,223,198,.82);border:1px solid var(--line);padding:6px 9px;
+  }
+  .map-scale{
+    position:absolute;bottom:12px;right:14px;z-index:3;color:#6a5b3d;font-size:.48rem;letter-spacing:.14em;
+  }
+  .map-scale i{display:block;width:66px;height:8px;border:1px solid #6a5b3d;border-top:none;margin-bottom:4px}
+
+  .stops{display:flex;gap:10px;overflow-x:auto;margin:14px -22px 0;padding:0 22px 6px;scrollbar-width:thin}
+  .stopcard{
+    flex:0 0 132px;border:1px solid var(--line);background:rgba(255,255,255,.35);overflow:hidden;
+  }
+  .stopcard img{display:block;width:100%;height:74px;object-fit:cover;filter:sepia(.15)}
+  .stopcard .sc-pad{padding:9px 10px}
+  .stopcard .sc-city{font-family:"Playfair Display",serif;font-weight:800;font-size:.78rem}
+  .stopcard .sc-date{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:#6a5b3d;margin-top:3px}
+  .stopcard .sc-n{font-size:.58rem;color:#4f4630;margin-top:4px}
+
+  .feed{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .feeditem{border-left:4px solid var(--gold);background:rgba(255,255,255,.3);padding:11px 13px}
+  .feeditem .fi-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .feeditem .fi-who{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .feeditem .fi-when{font-size:.5rem;color:#6a5b3d}
+  .feeditem .fi-what{font-size:.74rem;line-height:1.65;margin-top:5px}
+
+  /* ---------------- PLAYLIST ---------------- */
+  .pl-hero{
+    display:flex;gap:14px;margin-top:6px;align-items:flex-end;
+  }
+  .pl-cover{
+    flex:0 0 118px;height:118px;position:relative;overflow:hidden;
+    background:linear-gradient(140deg,var(--red),#5a0d12 45%,#1a1510);
+    box-shadow:0 14px 26px -14px rgba(0,0,0,.7);
+  }
+  .pl-cover span{
+    position:absolute;font-family:"Noto Serif JP",serif;font-weight:700;color:#f6efdb;
+  }
+  .pl-cover .c1{font-size:3.1rem;left:10px;bottom:2px;opacity:.95}
+  .pl-cover .c2{font-size:1rem;right:10px;top:10px;letter-spacing:.2em;color:#e9b6ba}
+  .pl-meta{min-width:0}
+  .pl-meta .pl-kind{font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:#6a5b3d}
+  .pl-meta h4{font-family:"Playfair Display",serif;font-weight:800;font-size:1.24rem;line-height:1.02;margin-top:5px}
+  .pl-meta .pl-by{font-size:.66rem;color:#4f4630;margin-top:7px;line-height:1.5}
+  .pl-actions{display:flex;gap:10px;margin:14px 0 4px}
+  .btn{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:"Special Elite",monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+    padding:13px;border:1px solid var(--ink);cursor:pointer;transition:transform .15s, box-shadow .15s;
+  }
+  .btn:active{transform:translateY(2px)}
+  .btn.primary{background:var(--red);color:#f7ecd4;border-color:var(--red-deep);
+    box-shadow:0 6px 0 -2px var(--red-deep)}
+  .btn.primary:active{box-shadow:0 2px 0 -1px var(--red-deep)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9}
+
+  .track{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line)}
+  .track .tr-n{font-family:"Playfair Display",serif;font-size:.78rem;color:#8a7a55;width:20px}
+  .track .tr-i{flex:1;min-width:0}
+  .track .tr-t{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track .tr-a{font-size:.6rem;color:#6a5b3d;margin-top:2px}
+  .track .tr-d{font-size:.62rem;color:#6a5b3d;letter-spacing:.06em}
+  .track.hot .tr-t{color:var(--red)}
+  .track .tr-eq{display:flex;align-items:flex-end;gap:2px;height:12px}
+  .track .tr-eq i{width:2px;background:var(--red);animation:eq .9s ease-in-out infinite}
+  .track .tr-eq i:nth-child(2){animation-delay:.2s}
+  .track .tr-eq i:nth-child(3){animation-delay:.4s}
+  @keyframes eq{0%,100%{height:3px}50%{height:12px}}
+
+  /* ---------------- LÉGENDE SOUS CHAQUE ÉCRAN ---------------- */
+  .device figcaption{
+    margin-top:18px;text-align:center;
+  }
+  .device figcaption .fc-n{font-family:"Playfair Display",serif;font-weight:800;color:#f6efdb;font-size:1.05rem}
+  .device figcaption .fc-d{font-size:.7rem;color:#9a9280;line-height:1.7;margin-top:6px;letter-spacing:.04em}
+  .device figcaption .fc-tag{
+    display:inline-block;margin-top:10px;font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;
+    color:#d8c49a;border:1px solid rgba(216,196,154,.3);padding:5px 10px;border-radius:999px;
+  }
+
+  footer.mock-foot{
+    position:relative;z-index:2;max-width:1180px;margin:20px auto 0;padding:30px 26px 10px;
+    color:#8a8474;font-size:.68rem;line-height:2;letter-spacing:.04em;border-top:1px solid rgba(255,255,255,.06);
+  }
+  footer.mock-foot b{color:#d8c49a;font-weight:400}
+
+  @media (max-width:860px){
+    .phones{gap:60px 0}
+    .page-head{padding-top:44px}
+  }
+  @media (max-width:430px){
+    .device{width:100%}
+    .frame{padding:8px;border-radius:40px}
+    .screen{height:auto;min-height:80dvh;border-radius:32px}
+    .screen-body{max-height:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .track .tr-eq i{animation:none;height:8px}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1H10v-5.5h4V21h3.5a1 1 0 0 0 1-1V9.5"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M6 8.3v4.2a5 5 0 0 0 5 5h4.7"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1.2a2 2 0 0 0 0 3.6V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1.2a2 2 0 0 0 0-3.6Z"/><path d="M14 6.2v11.6" stroke-dasharray="2 2.4"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="12" cy="12" r="3.3"/><path d="M8 5l1.3-2h5.4L16 5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M3 13.5 11 12l-4-7h2.5l5 6.4 5.5-1a1.6 1.6 0 0 1 .4 3.1l-4.6 1-3 5.5H11l1.4-5.3L4 13.9Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l11 7-11 7Z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></symbol>
+</svg>
+
+<header class="page-head">
+  <p class="kicker">Maquette · Design v0.1 · App mobile</p>
+  <h1 class="page-title">Le hub du voyage <em>TanaTrip</em></h1>
+  <p class="page-sub">
+    Voici les <b>6 écrans</b> de l'app imaginée pour vous. Même identité que votre
+    « Passeport des condamnés » : papier, tampon rouge, style dossier classé.
+    Rien n'est connecté ici — c'est une maquette visuelle pour <b>se mettre d'accord</b> avant de coder.
+  </p>
+  <div class="legend">
+    <span>Japon · 13 → 22 nov. 2026</span>
+    <span>Groupe : Tana</span>
+    <span>3 membres</span>
+    <span>10 jours · 1 parcours</span>
+  </div>
+</header>
+
+<main class="phones">
+
+  <!-- ============ 1. ACCUEIL ============ -->
+  <figure class="device">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:20</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body">
+          <div class="hero">
+            <video autoplay muted loop playsinline poster="assets/japon-poster.jpg">
+              <source src="assets/japon.mp4" type="video/mp4">
+            </video>
+            <div class="shade"></div>
+            <div class="hero-txt">
+              <div class="hero-kick">Dossier de voyage · Groupe Tana</div>
+              <h3>TanaTrip</h3>
+              <div class="hero-jp jp">日本 2026 · 三人の旅</div>
+            </div>
+          </div>
+
+          <div class="countdown">
+            <div class="cd-num">J-30</div>
+            <div class="cd-lab">avant le départ<b>Tokyo · Haneda</b></div>
+          </div>
+
+          <div class="members">
+            <div class="avatars">
+              <div class="av" title="Le Golgot">LG</div>
+              <div class="av" title="Cass">CA</div>
+              <div class="av" title="Nico">NI</div>
+            </div>
+            <div class="m-lab">L'équipage · 3 membres</div>
+          </div>
+
+          <p class="sec-title">Prochain rendez-vous</p>
+          <div class="nextevent">
+            <div class="ne-who">Vol AF 276 — Paris CDG</div>
+            <div class="ne-what">Embarquement porte 34, terminal 2E. Passeports + ESTA Japon prêts.</div>
+            <div class="ne-when">Vendredi 13 novembre · 09 h 15 · assigné au Golgot</div>
+          </div>
+
+          <p class="sec-title">Tout le dossier</p>
+          <div class="quick">
+            <a class="qcard" href="#itineraire">
+              <div class="q-ic"><svg><use href="#i-route"/></svg></div>
+              <div class="q-t">Itinéraire</div><div class="q-d">10 jours · 6 villes</div>
+            </a>
+            <a class="qcard" href="#billets">
+              <div class="q-ic"><svg><use href="#i-ticket"/></svg></div>
+              <div class="q-t">Billets</div><div class="q-d">7 documents</div>
+            </a>
+            <a class="qcard" href="#photos">
+              <div class="q-ic"><svg><use href="#i-photo"/></svg></div>
+              <div class="q-t">Photos</div><div class="q-d">128 · partagées</div>
+            </a>
+            <a class="qcard" href="#playlist">
+              <div class="q-ic"><svg><use href="#i-music"/></svg></div>
+              <div class="q-t">Playlist</div><div class="q-d">42 titres</div>
+            </a>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <a class="tab active" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">01 — Accueil</div>
+      <div class="fc-d">Tableau de bord : compte à rebours, prochain rendez-vous et accès à tout le dossier.</div>
+      <span class="fc-tag">Écran d'arrivée</span>
+    </figcaption>
+  </figure>
+
+  <!-- ============ 2. ITINÉRAIRE ============ -->
+  <figure class="device" id="itineraire">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:21</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body">
+          <div class="dossier-head">
+            <div>
+              <h2>Itinéraire</h2>
+              <div class="sub">13 → 22 nov. · 10 jours · 6 villes</div>
+            </div>
+            <div class="hanko jp">旅</div>
+          </div>
+
+          <div class="timeline">
+            <div class="step done">
+              <div class="dot">1</div>
+              <div class="st-top"><span class="st-city">Osaka</span><span class="st-date">Ven 13 nov</span></div>
+              <div class="st-acts">Arrivée KIX 14 h · check-in · Dotonbori le soir</div>
+              <div class="st-meta"><span class="chip green">Réservé</span><span class="chip">Vol + hôtel</span></div>
+            </div>
+            <div class="step done">
+              <div class="dot">2</div>
+              <div class="st-top"><span class="st-city">Osaka</span><span class="st-date">Sam 14 nov</span></div>
+              <div class="st-acts">Château d'Osaka · Shinsekai · kushikatsu</div>
+              <div class="st-meta"><span class="chip green">Planifié</span><span class="chip">Journée libre</span></div>
+            </div>
+            <div class="step soon">
+              <div class="dot">3</div>
+              <div class="st-top"><span class="st-city">Nara</span><span class="st-date">Dim 15 nov</span></div>
+              <div class="st-acts">Les cerfs du parc · Tōdai-ji · Kasuga-taisha</div>
+              <div class="st-meta"><span class="chip gold">À confirmer</span><span class="chip">Train 1 h</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">4</div>
+              <div class="st-top"><span class="st-city">Kyoto</span><span class="st-date">Lun 16 nov</span></div>
+              <div class="st-acts">Fushimi Inari à l'aube · Gion au crépuscule</div>
+              <div class="st-meta"><span class="chip">Hôtel à booker</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">5</div>
+              <div class="st-top"><span class="st-city">Kyoto</span><span class="st-date">Mar 17 nov</span></div>
+              <div class="st-acts">Arashiyama · Kinkaku-ji · cérémonie du thé</div>
+              <div class="st-meta"><span class="chip">Journée chargée</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">6</div>
+              <div class="st-top"><span class="st-city">Kanazawa</span><span class="st-date">Mer 18 nov</span></div>
+              <div class="st-acts">Kenroku-en · marché Omichō · quartier des geishas</div>
+              <div class="st-meta"><span class="chip">Optionnel</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">7</div>
+              <div class="st-top"><span class="st-city">Hakone</span><span class="st-date">Jeu 19 nov</span></div>
+              <div class="st-acts">Onsen · ryokan · vue sur le mont Fuji</div>
+              <div class="st-meta"><span class="chip gold">Réserver ryokan</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">8</div>
+              <div class="st-top"><span class="st-city">Fuji · Kawaguchiko</span><span class="st-date">Ven 20 nov</span></div>
+              <div class="st-acts">Lacs · randonnée douce · photos du Fuji</div>
+              <div class="st-meta"><span class="chip">Sous réserve météo</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">9</div>
+              <div class="st-top"><span class="st-city">Tokyo</span><span class="st-date">Sam 21 nov</span></div>
+              <div class="st-acts">Shibuya · Akihabara · teamLab · izakaya</div>
+              <div class="st-meta"><span class="chip">Dernière nuit</span></div>
+            </div>
+            <div class="step">
+              <div class="dot">10</div>
+              <div class="st-top"><span class="st-city">Tokyo → Maison</span><span class="st-date">Dim 22 nov</span></div>
+              <div class="st-acts">Dernier konbini · vol retour 18 h 40</div>
+              <div class="st-meta"><span class="chip red">Départ</span></div>
+            </div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <a class="tab" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab active" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">02 — Itinéraire</div>
+      <div class="fc-d">Le planning jour par jour, avec statut (réservé / à confirmer) et activités.</div>
+      <span class="fc-tag">Planning</span>
+    </figcaption>
+  </figure>
+
+  <!-- ============ 3. BILLETS ============ -->
+  <figure class="device" id="billets">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:22</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body">
+          <div class="dossier-head">
+            <div>
+              <h2>Billets</h2>
+              <div class="sub">7 documents · tous les membres</div>
+            </div>
+            <div class="hanko jp">券</div>
+          </div>
+
+          <div class="filters">
+            <span class="f on">Tout</span><span class="f">Vol</span><span class="f">Train</span>
+            <span class="f">Hôtel</span><span class="f">Activité</span>
+          </div>
+
+          <div class="ticket">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Vol aller · AF 276</div>
+              <div class="tk-title">Paris CDG → Osaka KIX</div>
+              <div class="tk-route">Ven 13 nov · 09 h 15 → 08 h 40 (+1) · Éco · bagage 23 kg</div>
+              <div class="tk-foot">
+                <span class="tk-ref">Réf. TN-2601-A</span>
+                <span class="tk-assign"><span class="av">LG</span><span class="av">CA</span><span class="av">NI</span></span>
+              </div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket green">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">JR Pass · 7 jours</div>
+              <div class="tk-title">Réseau national JR</div>
+              <div class="tk-route">Activation à Osaka le 15 nov · voyages en Shinkansen illimités</div>
+              <div class="tk-foot">
+                <span class="tk-ref">Réf. TN-2601-JR</span>
+                <span class="tk-assign"><span class="av">LG</span><span class="av">CA</span><span class="av">NI</span></span>
+              </div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Shinkansen · réservé</div>
+              <div class="tk-title">Kyoto → Kanazawa</div>
+              <div class="tk-route">Mer 18 nov · 08 h 06 · voiture 5, sièges 12A-12C</div>
+              <div class="tk-foot"><span class="tk-ref">Réf. TN-2618-TH</span></div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket gold">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Hôtel · Osaka</div>
+              <div class="tk-title">Namba Grand Stay</div>
+              <div class="tk-route">2 nuits · check-in 13 nov, 15 h · 2 chambres</div>
+              <div class="tk-foot"><span class="tk-ref">Réf. TN-2601-HO</span></div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket gold">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Ryokan · Hakone</div>
+              <div class="tk-title">Onsen Sakura-an</div>
+              <div class="tk-route">1 nuit · demi-pension · bain privé réservé</div>
+              <div class="tk-foot"><span class="tk-ref">Réf. TN-2619-HA</span><span class="chip gold">À confirmer</span></div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket red">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Activité · Tokyo</div>
+              <div class="tk-title">teamLab Planets</div>
+              <div class="tk-route">Sam 21 nov · créneau 11 h 00 · billets horodatés</div>
+              <div class="tk-foot"><span class="tk-ref">Réf. TN-2621-TL</span></div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+          <div class="ticket">
+            <div class="tk-spine"></div>
+            <div class="tk-main">
+              <div class="tk-kind">Vol retour · AF 277</div>
+              <div class="tk-title">Tokyo HND → Paris CDG</div>
+              <div class="tk-route">Dim 22 nov · 18 h 40 · Éco · bagage 23 kg</div>
+              <div class="tk-foot"><span class="tk-ref">Réf. TN-2622-B</span></div>
+            </div>
+            <div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div>
+          </div>
+
+        </div>
+        <nav class="tabbar">
+          <a class="tab" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab active" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">03 — Billets</div>
+      <div class="fc-d">Tous les documents au même endroit, en format ticket avec QR à présenter.</div>
+      <span class="fc-tag">Documents</span>
+    </figcaption>
+  </figure>
+
+  <!-- ============ 4. PHOTOS ============ -->
+  <figure class="device" id="photos">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:23</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body">
+          <div class="dossier-head">
+            <div>
+              <h2>Photos</h2>
+              <div class="sub">128 images · album partagé</div>
+            </div>
+            <div class="hanko jp">撮</div>
+          </div>
+
+          <div class="filters">
+            <span class="f on">Tout</span><span class="f">J1</span><span class="f">J3</span>
+            <span class="f">J5</span><span class="f">J9</span>
+          </div>
+
+          <div class="gallery">
+            <div class="shot"><img src="https://picsum.photos/seed/tana-osaka/600/500" alt="Dotonbori à Osaka"><span class="cap">J1 · Dotonbori</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-nara/600/500" alt="Les cerfs de Nara"><span class="cap">J3 · Les cerfs</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-kyoto/600/500" alt="Ruelles de Kyoto"><span class="cap">J4 · Gion</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-onsen/600/500" alt="Onsen à Hakone"><span class="cap">J7 · Onsen</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-fuji/600/500" alt="Mont Fuji"><span class="cap">J8 · Le Fuji</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-tokyo/600/500" alt="Shibuya la nuit"><span class="cap">J9 · Shibuya</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-food/600/500" alt="Repas japonais"><span class="cap">J2 · Kushikatsu</span></div>
+            <div class="shot"><img src="https://picsum.photos/seed/tana-train/600/500" alt="Shinkansen"><span class="cap">J5 · Shinkansen</span></div>
+          </div>
+
+          <div class="upload">
+            <svg><use href="#i-plus"/></svg> Ajouter des photos du jour
+          </div>
+
+          <p class="sec-title">Souvenir du jour</p>
+          <div class="shot" style="transform:rotate(-1deg)">
+            <img src="https://picsum.photos/seed/tana-best/700/420" alt="Meilleure photo de la journée">
+            <span class="cap">Choisi par Cass · Jour 4 — « la meilleure lumière de Kyoto »</span>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <a class="tab" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab active" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">04 — Photos</div>
+      <div class="fc-d">Album commun, filtres par jour, ajout en un geste, photo « souvenir du jour ».</div>
+      <span class="fc-tag">Galerie</span>
+    </figcaption>
+  </figure>
+
+  <!-- ============ 5. CARTE ============ -->
+  <figure class="device" id="carte">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:24</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body" style="padding-top:2px">
+          <div class="dossier-head" style="margin-bottom:10px">
+            <div>
+              <h2>Carte du voyage</h2>
+              <div class="sub">Le carnet façon Polarsteps</div>
+            </div>
+            <div class="hanko jp">図</div>
+          </div>
+
+          <div class="mapwrap">
+            <div class="map-legend">Parcours Tana · 6 étapes</div>
+            <svg viewBox="0 0 348 380" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0">
+              <defs>
+                <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M24 0H0V24" fill="none" stroke="#b9a980" stroke-width=".6" opacity=".5"/>
+                </pattern>
+              </defs>
+              <rect width="348" height="380" fill="url(#grid)"/>
+              <path d="M40 330 C90 300 70 250 120 210 C170 170 150 120 210 100 C250 88 280 70 305 52"
+                    fill="none" stroke="#181410" stroke-width="2" stroke-dasharray="6 6" opacity=".5"/>
+              <g font-family="Playfair Display, serif" font-size="11" fill="#181410">
+                <circle cx="55" cy="330" r="7" fill="#b3121b" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="70" y="334">Osaka</text>
+                <circle cx="105" cy="300" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="118" y="304">Nara</text>
+                <circle cx="120" cy="210" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="133" y="214">Kyoto</text>
+                <circle cx="175" cy="150" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="188" y="154">Kanazawa</text>
+                <circle cx="212" cy="110" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="225" y="114">Hakone</text>
+                <circle cx="252" cy="74" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="265" y="78">Fuji</text>
+                <circle cx="300" cy="52" r="6" fill="#b3121b" stroke="#e9dfc6" stroke-width="2"/>
+                <text x="255" y="40">Tokyo</text>
+              </g>
+            </svg>
+            <div class="map-scale"><i></i>0 — 150 km</div>
+          </div>
+
+          <div class="stops">
+            <div class="stopcard"><img src="https://picsum.photos/seed/tana-s1/300/200" alt="Osaka"><div class="sc-pad"><div class="sc-city">Osaka</div><div class="sc-date">J1 — 13 nov</div><div class="sc-n">Point de départ</div></div></div>
+            <div class="stopcard"><img src="https://picsum.photos/seed/tana-s2/300/200" alt="Nara"><div class="sc-pad"><div class="sc-city">Nara</div><div class="sc-date">J3 — 15 nov</div><div class="sc-n">Les cerfs</div></div></div>
+            <div class="stopcard"><img src="https://picsum.photos/seed/tana-s3/300/200" alt="Kyoto"><div class="sc-pad"><div class="sc-city">Kyoto</div><div class="sc-date">J4 — 16 nov</div><div class="sc-n">Temples</div></div></div>
+            <div class="stopcard"><img src="https://picsum.photos/seed/tana-s4/300/200" alt="Hakone"><div class="sc-pad"><div class="sc-city">Hakone</div><div class="sc-date">J7 — 19 nov</div><div class="sc-n">Onsen</div></div></div>
+            <div class="stopcard"><img src="https://picsum.photos/seed/tana-s5/300/200" alt="Tokyo"><div class="sc-pad"><div class="sc-city">Tokyo</div><div class="sc-date">J9 — 21 nov</div><div class="sc-n">Final</div></div></div>
+          </div>
+
+          <p class="sec-title">Journal du voyage</p>
+          <div class="feed">
+            <div class="feeditem">
+              <div class="fi-top"><span class="fi-who">Le Golgot</span><span class="fi-when">J1 · Dotonbori</span></div>
+              <div class="fi-what">« Premier soir : on a commandé au hasard. Résultat : trois plats parfaits. Le Japon pardonne tout. »</div>
+            </div>
+            <div class="feeditem" style="border-left-color:var(--red)">
+              <div class="fi-top"><span class="fi-who" style="color:var(--red)">Cass</span><span class="fi-when">J3 · Nara</span></div>
+              <div class="fi-what">« Nico a tenté de nourrir un cerf. Le cerf a pris le cornet entier. Personne n'a été blessé. Cette fois. »</div>
+            </div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <a class="tab" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab active" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">05 — Carte</div>
+      <div class="fc-d">Le tracé du voyage, les étapes en vignettes et le journal de bord façon Polarsteps.</div>
+      <span class="fc-tag">Carnet de voyage</span>
+    </figcaption>
+  </figure>
+
+  <!-- ============ 6. PLAYLIST ============ -->
+  <figure class="device" id="playlist">
+    <div class="frame">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="statusbar">
+          <span>16:25</span>
+          <span class="sb-icons">
+            <svg viewBox="0 0 20 14"><rect x="0" y="9" width="3" height="5" rx="1" fill="#181410"/><rect x="4.5" y="6" width="3" height="8" rx="1" fill="#181410"/><rect x="9" y="3" width="3" height="11" rx="1" fill="#181410"/><rect x="13.5" y="0" width="3" height="14" rx="1" fill="#181410" opacity=".35"/></svg>
+            <svg viewBox="0 0 24 12"><path d="M2 9C6 4 18 4 22 9" fill="none" stroke="#181410" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="1.6" fill="#181410"/></svg>
+            <svg viewBox="0 0 26 14"><rect x="1" y="2" width="20" height="10" rx="2.5" fill="none" stroke="#181410" stroke-width="1.6"/><rect x="3" y="4" width="14" height="6" rx="1" fill="#181410"/><rect x="22.5" y="5" width="2.2" height="4" rx="1" fill="#181410"/></svg>
+          </span>
+        </div>
+        <div class="screen-body">
+          <div class="dossier-head">
+            <div>
+              <h2>Playlist partagée</h2>
+              <div class="sub">La bande-son du groupe Tana</div>
+            </div>
+            <div class="hanko jp">音</div>
+          </div>
+
+          <div class="pl-hero">
+            <div class="pl-cover">
+              <span class="c1 jp">旅</span>
+              <span class="c2">TANA</span>
+            </div>
+            <div class="pl-meta">
+              <div class="pl-kind">Playlist collaborative</div>
+              <h4>Tana Roadtrip</h4>
+              <div class="pl-by">42 titres · 2 h 47<br>3 contributeurs</div>
+            </div>
+          </div>
+
+          <div class="pl-actions">
+            <button class="btn primary"><svg><use href="#i-play"/></svg>Lecture</button>
+            <button class="btn ghost"><svg><use href="#i-save"/></svg>Suivre</button>
+          </div>
+
+          <p class="sec-title">En boucle dans le Shinkansen</p>
+
+          <div class="track hot">
+            <span class="tr-eq"><i></i><i></i><i></i></span>
+            <div class="tr-i"><div class="tr-t">Plastic Love</div><div class="tr-a">Mariya Takeuchi</div></div>
+            <span class="tr-d">4:56</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">2</span>
+            <div class="tr-i"><div class="tr-t">Tokyo Drift</div><div class="tr-a">Teriyaki Boyz</div></div>
+            <span class="tr-d">4:15</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">3</span>
+            <div class="tr-i"><div class="tr-t">Stay With Me</div><div class="tr-a">Miki Matsubara</div></div>
+            <span class="tr-d">5:12</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">4</span>
+            <div class="tr-i"><div class="tr-t">Shin Sekai</div><div class="tr-a">Fujii Kaze</div></div>
+            <span class="tr-d">3:48</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">5</span>
+            <div class="tr-i"><div class="tr-t">Nuit de Shibuya</div><div class="tr-a">Tana Sounds</div></div>
+            <span class="tr-d">3:21</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">6</span>
+            <div class="tr-i"><div class="tr-t">Kaze no Tani</div><div class="tr-a">Joe Hisaishi</div></div>
+            <span class="tr-d">4:02</span>
+          </div>
+          <div class="track">
+            <span class="tr-n">7</span>
+            <div class="tr-i"><div class="tr-t">Ryokan Dreams</div><div class="tr-a">Le Golgot</div></div>
+            <span class="tr-d">2:58</span>
+          </div>
+
+          <p class="sec-title">Qui a ajouté quoi</p>
+          <div class="members">
+            <div class="avatars">
+              <div class="av">LG</div><div class="av">CA</div><div class="av">NI</div>
+            </div>
+            <div class="m-lab">Le Golgot · 19 titres — Cass · 14 — Nico · 9</div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <a class="tab" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+          <a class="tab" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+          <a class="tab" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+          <a class="tab" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+          <a class="tab" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+          <a class="tab active" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+        </nav>
+      </div>
+    </div>
+    <figcaption>
+      <div class="fc-n">06 — Playlist</div>
+      <div class="fc-d">La playlist commune : tout le monde peut ajouter ses sons, on voit qui a mis quoi.</div>
+      <span class="fc-tag">Musique</span>
+    </figcaption>
+  </figure>
+
+</main>
+
+<footer class="mock-foot">
+  <b>Maquette statique — v0.1.</b> Aucune donnée n'est enregistrée, tout est en exemple.<br>
+  Prochaine étape possible : choisir les écrans qu'on garde, puis transformer cette maquette en vraie app (les boutons et la connexion viendront après).
+</footer>
+
+</body>
+</html>

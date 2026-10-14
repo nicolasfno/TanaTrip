@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TanaTrip — Japon 2026</title>
+<meta name="description" content="Le hub de voyage du groupe Tana : itinéraire, billets, photos, carte et playlist.">
+<meta name="theme-color" content="#0a0c14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TanaTrip">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Special+Elite&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#181410;
+    --ink-soft:#5f5338;
+    --paper:#ece2ca;
+    --paper-2:#e2d6b8;
+    --line:#cbbc98;
+    --red:#b3121b;
+    --red-deep:#8a0d14;
+    --gold:#8a6d1f;
+    --green:#2f6b3a;
+    --night:#0a0c14;
+    --night-2:#12141f;
+    --pad-bottom:84px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Special Elite","Courier New",monospace;
+    background:var(--night);color:var(--ink);
+    min-height:100dvh;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .jp{font-family:"Noto Serif JP",serif}
+  .pf{font-family:"Playfair Display",Georgia,serif}
+  a{color:inherit}
+
+  /* ================= STRUCTURE ================= */
+  .app{display:block;min-height:100dvh}
+
+  /* --- barre latérale (PC) --- */
+  .sidebar{display:none}
+
+  /* --- zone principale --- */
+  .stage{position:relative;min-height:100dvh;background:linear-gradient(180deg,var(--paper),var(--paper-2))}
+  .stage::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.09;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  }
+
+  .mobiletop{
+    position:sticky;top:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+    background:rgba(10,12,20,.92);color:#f6efdb;
+    border-bottom:1px solid rgba(216,196,154,.18);
+    backdrop-filter:blur(8px);
+  }
+  .mobiletop .mt-brand{font-family:"Playfair Display",serif;font-weight:800;font-size:1.05rem;letter-spacing:.01em}
+  .mobiletop .mt-brand small{display:block;font-family:"Special Elite",monospace;font-weight:400;font-size:.54rem;letter-spacing:.28em;color:#d8c49a;margin-top:3px}
+  .hanko{
+    flex:0 0 auto;width:40px;height:40px;border:2px solid var(--red);border-radius:50%;
+    color:var(--red);display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Serif JP",serif;font-weight:700;font-size:1rem;transform:rotate(6deg);
+    background:radial-gradient(circle, rgba(179,18,27,.14), transparent 70%);
+  }
+
+  /* --- onglets mobiles --- */
+  .tabbar{
+    position:fixed;bottom:0;left:0;right:0;z-index:50;
+    display:grid;grid-template-columns:repeat(6,1fr);
+    background:rgba(233,223,198,.94);
+    border-top:1px solid var(--line);
+    backdrop-filter:blur(10px);
+    padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -8px 24px -14px rgba(0,0,0,.5);
+  }
+  .tab{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:10px 2px 12px;color:#8a7a55;font-size:.5rem;letter-spacing:.06em;
+    text-transform:uppercase;text-decoration:none;transition:color .2s, transform .15s;
+  }
+  .tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tab:active{transform:translateY(1px)}
+  .tab.active{color:var(--red)}
+  .tab.active::after{content:"";width:16px;height:2px;background:var(--red);margin-top:1px}
+
+  /* ================= VUES ================= */
+  .view{display:none;position:relative;z-index:2;animation:viewin .4s cubic-bezier(.16,1,.3,1) both}
+  .view.active{display:block}
+  @keyframes viewin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .container{padding:18px 16px var(--pad-bottom)}
+
+  .dossier-head{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+    border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:16px;
+  }
+  .dossier-head h1{font-family:"Playfair Display",serif;font-size:1.28rem;font-weight:800;line-height:1.05}
+  .dossier-head .sub{font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:#6a5b3d;margin-top:5px}
+  .sec-title{
+    font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;color:#5f5338;
+    margin:22px 0 10px;display:flex;align-items:center;gap:10px;
+  }
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:.56rem;letter-spacing:.16em;
+    text-transform:uppercase;border:1px solid var(--line);padding:5px 9px;color:#5f5338;
+    background:rgba(255,255,255,.25);white-space:nowrap;
+  }
+  .chip.red{color:var(--red);border-color:var(--red)}
+  .chip.gold{color:var(--gold);border-color:var(--gold);background:rgba(255,210,74,.12)}
+  .chip.green{color:var(--green);border-color:var(--green)}
+
+  /* ---------- ACCUEIL ---------- */
+  .hero{
+    position:relative;border-radius:8px;overflow:hidden;height:230px;
+    border:1px solid var(--line);box-shadow:0 20px 40px -24px rgba(60,45,20,.6);
+  }
+  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:brightness(.72) contrast(1.05) saturate(1.05)}
+  .hero .shade{position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(10,12,20,.28) 0%, rgba(10,12,20,.12) 40%, rgba(10,12,20,.86) 100%)}
+  .hero .hero-txt{position:absolute;left:20px;right:20px;bottom:16px;color:#f6efdb}
+  .hero .hero-kick{font-size:.54rem;letter-spacing:.34em;text-transform:uppercase;color:#e9b6ba;margin-bottom:8px}
+  .hero h2{font-family:"Playfair Display",serif;font-weight:800;font-size:2rem;line-height:.95;letter-spacing:-.01em}
+  .hero .hero-jp{font-size:.62rem;letter-spacing:.3em;color:#d8c49a;margin-top:8px}
+
+  .countdown{display:flex;align-items:baseline;gap:12px;margin:20px 0 4px}
+  .countdown .cd-num{font-family:"Playfair Display",serif;font-weight:800;font-size:3.2rem;line-height:1;color:var(--red);letter-spacing:-.03em}
+  .countdown .cd-lab{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#5f5338}
+  .countdown .cd-lab b{display:block;color:var(--ink);font-weight:400;font-size:.72rem;margin-top:3px}
+
+  .members{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .avatars{display:flex}
+  .av{
+    width:38px;height:38px;border-radius:50%;border:2px solid var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Playfair Display",serif;font-weight:800;font-size:.72rem;color:#6f5f3d;
+    background:repeating-linear-gradient(45deg,#d8cba8,#d8cba8 5px,#d2c39c 5px,#d2c39c 10px);
+    margin-left:-10px;box-shadow:0 2px 6px rgba(0,0,0,.2);
+  }
+  .av:first-child{margin-left:0}
+  .members .m-lab{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#5f5338}
+
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .qcard{
+    border:1px solid var(--line);background:rgba(255,255,255,.3);padding:13px;
+    display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);
+    transition:transform .15s, box-shadow .15s;
+  }
+  .qcard:hover{transform:translateY(-2px);box-shadow:0 12px 24px -16px rgba(0,0,0,.6)}
+  .qcard:active{transform:translateY(0) scale(.99)}
+  .qcard .q-ic{color:var(--red)}
+  .qcard .q-ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .qcard .q-t{font-size:.72rem;letter-spacing:.04em}
+  .qcard .q-d{font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:#6a5b3d}
+
+  .nextevent{border-left:4px solid var(--red);background:rgba(255,255,255,.32);padding:12px 14px}
+  .nextevent .ne-who{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--red)}
+  .nextevent .ne-what{font-size:.82rem;line-height:1.6;margin-top:5px}
+  .nextevent .ne-when{font-size:.6rem;letter-spacing:.06em;color:#6a5b3d;margin-top:6px}
+
+  /* ---------- ITINÉRAIRE ---------- */
+  .timeline{position:relative;padding-left:30px}
+  .timeline::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--line)}
+  .step{position:relative;padding:0 0 16px}
+  .step .dot{
+    position:absolute;left:-30px;top:2px;width:20px;height:20px;border-radius:50%;
+    border:2px solid var(--red);background:var(--paper);display:flex;align-items:center;justify-content:center;
+    font-family:"Playfair Display",serif;font-weight:800;font-size:.56rem;color:var(--red);
+  }
+  .step.done .dot{border-color:var(--green);color:var(--green)}
+  .step.soon .dot{border-color:var(--gold);color:var(--gold)}
+  .step .st-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .step .st-city{font-family:"Playfair Display",serif;font-weight:800;font-size:1rem;letter-spacing:-.01em}
+  .step .st-date{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#6a5b3d}
+  .step .st-acts{font-size:.76rem;line-height:1.7;color:#4f4630;margin-top:3px}
+  .step .st-meta{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
+
+  /* ---------- BILLETS ---------- */
+  .filters{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
+  .filters .f{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:7px 12px;
+    border:1px solid var(--line);color:#6a5b3d;background:rgba(255,255,255,.25);cursor:pointer;
+    font-family:"Special Elite",monospace;transition:background .15s,color .15s}
+  .filters .f.on{background:var(--ink);color:#f6efdb;border-color:var(--ink)}
+  .ticketlist{display:grid;gap:14px}
+  .ticket{
+    position:relative;display:flex;
+    background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.24));
+    border:1px solid var(--line);filter:drop-shadow(0 10px 16px rgba(60,45,20,.18));
+  }
+  .ticket .tk-spine{flex:0 0 8px;background:var(--red)}
+  .ticket.gold .tk-spine{background:var(--gold)}
+  .ticket.green .tk-spine{background:var(--green)}
+  .ticket .tk-main{flex:1;min-width:0;padding:13px 15px}
+  .ticket .tk-kind{font-size:.54rem;letter-spacing:.24em;text-transform:uppercase;color:#6a5b3d}
+  .ticket .tk-title{font-family:"Playfair Display",serif;font-weight:800;font-size:.95rem;margin-top:3px;line-height:1.1}
+  .ticket .tk-route{font-size:.72rem;color:#4f4630;margin-top:6px;line-height:1.55}
+  .ticket .tk-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .ticket .tk-ref{font-size:.56rem;letter-spacing:.12em;color:#6a5b3d}
+  .ticket .tk-stub{flex:0 0 76px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-left:2px dashed var(--line);padding:10px 8px}
+  .ticket .tk-stub::before,.ticket .tk-stub::after{content:"";position:absolute;left:-9px;width:16px;height:16px;border-radius:50%;background:var(--paper-2);border:1px solid var(--line)}
+  .ticket .tk-stub::before{top:-9px}
+  .ticket .tk-stub::after{bottom:-9px}
+  .tk-qr{width:42px;height:42px;background:
+      repeating-linear-gradient(90deg,var(--ink) 0 3px,transparent 3px 6px),
+      repeating-linear-gradient(0deg,var(--ink) 0 3px,var(--paper) 3px 6px);
+    box-shadow:0 0 0 3px #fff}
+  .tk-assign{display:flex;gap:4px}
+  .tk-assign .av{width:22px;height:22px;font-size:.5rem;border-width:1px;margin-left:-6px}
+  .tk-assign .av:first-child{margin-left:0}
+
+  /* ---------- PHOTOS ---------- */
+  .gallery{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .shot{position:relative;border:3px solid #fff;background:#fff;box-shadow:0 8px 16px -10px rgba(0,0,0,.5);overflow:hidden}
+  .shot:nth-child(odd){transform:rotate(-1.2deg)}
+  .shot:nth-child(even){transform:rotate(1deg)}
+  .shot img{display:block;width:100%;height:120px;object-fit:cover;filter:sepia(.12) contrast(1.02)}
+  .shot .cap{position:absolute;left:0;right:0;bottom:0;padding:6px 7px;
+    background:linear-gradient(180deg,transparent,rgba(10,12,20,.82));color:#f6efdb;font-size:.52rem;letter-spacing:.1em}
+  .upload{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--line);
+    color:#6a5b3d;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;padding:15px;margin-top:12px;
+    background:rgba(255,255,255,.22);cursor:pointer;transition:background .15s}
+  .upload:hover{background:rgba(255,255,255,.4)}
+  .upload svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+
+  /* ---------- CARTE ---------- */
+  .mapwrap{position:relative;height:300px;border-radius:8px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(120% 90% at 30% 20%, #efe6cf, #e0d3b3 70%)}
+  .mapwrap::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E")}
+  .map-legend{position:absolute;top:12px;left:14px;z-index:3;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;
+    color:#6a5b3d;background:rgba(233,223,198,.85);border:1px solid var(--line);padding:6px 9px}
+  .map-scale{position:absolute;bottom:12px;right:14px;z-index:3;color:#6a5b3d;font-size:.48rem;letter-spacing:.14em}
+  .map-scale i{display:block;width:66px;height:8px;border:1px solid #6a5b3d;border-top:none;margin-bottom:4px}
+  .stops{display:flex;gap:10px;overflow-x:auto;margin:14px -16px 0;padding:0 16px 6px;scrollbar-width:thin}
+  .stopcard{flex:0 0 134px;border:1px solid var(--line);background:rgba(255,255,255,.35);overflow:hidden}
+  .stopcard img{display:block;width:100%;height:76px;object-fit:cover;filter:sepia(.15)}
+  .stopcard .sc-pad{padding:9px 10px}
+  .stopcard .sc-city{font-family:"Playfair Display",serif;font-weight:800;font-size:.8rem}
+  .stopcard .sc-date{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:#6a5b3d;margin-top:3px}
+  .stopcard .sc-n{font-size:.58rem;color:#4f4630;margin-top:4px}
+  .feed{display:flex;flex-direction:column;gap:10px}
+  .feeditem{border-left:4px solid var(--gold);background:rgba(255,255,255,.3);padding:11px 13px}
+  .feeditem .fi-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+  .feeditem .fi-who{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .feeditem .fi-when{font-size:.5rem;color:#6a5b3d}
+  .feeditem .fi-what{font-size:.76rem;line-height:1.65;margin-top:5px}
+
+  /* ---------- PLAYLIST ---------- */
+  .pl-hero{display:flex;gap:14px;align-items:flex-end}
+  .pl-cover{flex:0 0 118px;height:118px;position:relative;overflow:hidden;
+    background:linear-gradient(140deg,var(--red),#5a0d12 45%,#1a1510);box-shadow:0 14px 26px -14px rgba(0,0,0,.7)}
+  .pl-cover span{position:absolute;font-family:"Noto Serif JP",serif;font-weight:700;color:#f6efdb}
+  .pl-cover .c1{font-size:3.1rem;left:10px;bottom:2px;opacity:.95}
+  .pl-cover .c2{font-size:1rem;right:10px;top:10px;letter-spacing:.2em;color:#e9b6ba}
+  .pl-meta{min-width:0}
+  .pl-meta .pl-kind{font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:#6a5b3d}
+  .pl-meta h2{font-family:"Playfair Display",serif;font-weight:800;font-size:1.28rem;line-height:1.02;margin-top:5px}
+  .pl-meta .pl-by{font-size:.66rem;color:#4f4630;margin-top:7px;line-height:1.5}
+  .pl-actions{display:flex;gap:10px;margin:14px 0 4px}
+  .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:"Special Elite",monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+    padding:14px;border:1px solid var(--ink);cursor:pointer;transition:transform .15s, box-shadow .15s;
+    text-decoration:none;color:var(--ink);background:transparent}
+  .btn:active{transform:translateY(2px)}
+  .btn.primary{background:var(--red);color:#f7ecd4;border-color:var(--red-deep);box-shadow:0 6px 0 -2px var(--red-deep)}
+  .btn.primary:active{box-shadow:0 2px 0 -1px var(--red-deep)}
+  .btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9}
+  .track{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line)}
+  .track .tr-n{font-family:"Playfair Display",serif;font-size:.78rem;color:#8a7a55;width:20px}
+  .track .tr-i{flex:1;min-width:0}
+  .track .tr-t{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track .tr-a{font-size:.6rem;color:#6a5b3d;margin-top:2px}
+  .track .tr-d{font-size:.62rem;color:#6a5b3d}
+  .track .tr-eq{display:flex;align-items:flex-end;gap:2px;height:12px}
+  .track .tr-eq i{width:2px;background:var(--red);animation:eq .9s ease-in-out infinite}
+  .track .tr-eq i:nth-child(2){animation-delay:.2s}
+  .track .tr-eq i:nth-child(3){animation-delay:.4s}
+  @keyframes eq{0%,100%{height:3px}50%{height:12px}}
+
+  /* ================= PC / TABLETTE ================= */
+  @media (min-width:920px){
+    :root{--pad-bottom:60px}
+    body{background:var(--night)}
+    .app{display:flex;max-width:1240px;margin:0 auto;min-height:100dvh;
+      box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 40px 120px -50px rgba(0,0,0,.9)}
+    .mobiletop{display:none}
+    .tabbar{display:none}
+
+    .sidebar{
+      display:flex;flex-direction:column;gap:6px;flex:0 0 280px;
+      background:linear-gradient(180deg,#0c0e18,#0a0c14);
+      padding:30px 22px;position:sticky;top:0;height:100dvh;
+      border-right:1px solid rgba(255,255,255,.06);
+    }
+    .sidebar .sb-brand{color:#f6efdb;font-family:"Playfair Display",serif;font-weight:800;font-size:1.35rem;line-height:1}
+    .sidebar .sb-brand small{display:block;font-family:"Special Elite",monospace;font-weight:400;font-size:.56rem;letter-spacing:.3em;color:#d8c49a;margin-top:8px}
+    .sidebar .sb-seal{
+      width:64px;height:64px;border:2px solid var(--red);border-radius:50%;color:var(--red);
+      display:flex;align-items:center;justify-content:center;font-family:"Noto Serif JP",serif;
+      font-weight:700;font-size:1.5rem;transform:rotate(6deg);margin:26px 0 30px;
+      background:radial-gradient(circle, rgba(179,18,27,.14), transparent 70%);
+    }
+    .sidebar nav{display:flex;flex-direction:column;gap:4px}
+    .side-link{
+      display:flex;align-items:center;gap:12px;padding:12px 13px;text-decoration:none;
+      color:#c8c2b2;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+      border-left:2px solid transparent;transition:background .18s,color .18s,border-color .18s;
+    }
+    .side-link svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .side-link:hover{background:rgba(255,255,255,.04);color:#f6efdb}
+    .side-link.active{color:#f6efdb;border-left-color:var(--red);background:rgba(179,18,27,.12)}
+    .sidebar .sb-foot{margin-top:auto;color:#6f6a5c;font-size:.56rem;letter-spacing:.14em;line-height:2;text-transform:uppercase}
+    .sidebar .sb-foot b{color:#d8c49a;font-weight:400}
+
+    .stage{flex:1;min-width:0}
+    .container{max-width:820px;margin:0 auto;padding:38px 44px 70px}
+    .hero{height:280px}
+    .hero h2{font-size:2.6rem}
+    .quick{grid-template-columns:repeat(4,1fr)}
+    .gallery{grid-template-columns:repeat(3,1fr)}
+    .shot img{height:150px}
+    .stops{margin-left:0;margin-right:0;padding-left:0;padding-right:0}
+    .ticketlist{grid-template-columns:1fr 1fr}
+  }
+  @media (min-width:1240px){
+    .container{max-width:880px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .view{animation:none}
+    .track .tr-eq i{animation:none;height:8px}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1H10v-5.5h4V21h3.5a1 1 0 0 0 1-1V9.5"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M6 8.3v4.2a5 5 0 0 0 5 5h4.7"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1.2a2 2 0 0 0 0 3.6V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1.2a2 2 0 0 0 0-3.6Z"/><path d="M14 6.2v11.6" stroke-dasharray="2 2.4"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="12" cy="12" r="3.3"/><path d="M8 5l1.3-2h5.4L16 5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 5l11 7-11 7Z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></symbol>
+</svg>
+
+<div class="app">
+
+  <!-- ============ BARRE LATÉRALE (PC) ============ -->
+  <aside class="sidebar">
+    <div class="sb-brand">TanaTrip<small>Japon 2026 · 日本</small></div>
+    <div class="sb-seal jp">旅</div>
+    <nav>
+      <a class="side-link" data-go="accueil" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+      <a class="side-link" data-go="itineraire" href="#itineraire"><svg><use href="#i-route"/></svg>Itinéraire</a>
+      <a class="side-link" data-go="billets" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+      <a class="side-link" data-go="photos" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+      <a class="side-link" data-go="carte" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+      <a class="side-link" data-go="playlist" href="#playlist"><svg><use href="#i-music"/></svg>Playlist</a>
+    </nav>
+    <div class="sb-foot">Groupe <b>Tana</b><br>3 membres · 10 jours<br>13 → 22 nov. 2026</div>
+  </aside>
+
+  <!-- ============ ZONE PRINCIPALE ============ -->
+  <div class="stage">
+    <header class="mobiletop">
+      <div class="mt-brand">TanaTrip<small>Japon 2026</small></div>
+      <div class="hanko jp">旅</div>
+    </header>
+
+    <!-- ---- ACCUEIL ---- -->
+    <section class="view" id="view-accueil">
+      <div class="container">
+        <div class="hero">
+          <video autoplay muted loop playsinline poster="assets/japon-poster.jpg">
+            <source src="assets/japon.mp4" type="video/mp4">
+          </video>
+          <div class="shade"></div>
+          <div class="hero-txt">
+            <div class="hero-kick">Dossier de voyage · Groupe Tana</div>
+            <h2>TanaTrip</h2>
+            <div class="hero-jp jp">日本 2026 · 三人の旅</div>
+          </div>
+        </div>
+
+        <div class="countdown">
+          <div class="cd-num">J-30</div>
+          <div class="cd-lab">avant le départ<b>Tokyo · Haneda</b></div>
+        </div>
+
+        <div class="members">
+          <div class="avatars"><div class="av">LG</div><div class="av">CA</div><div class="av">NI</div></div>
+          <div class="m-lab">L'équipage · 3 membres</div>
+        </div>
+
+        <p class="sec-title">Prochain rendez-vous</p>
+        <div class="nextevent">
+          <div class="ne-who">Vol AF 276 — Paris CDG</div>
+          <div class="ne-what">Embarquement porte 34, terminal 2E. Passeports + ESTA Japon prêts.</div>
+          <div class="ne-when">Vendredi 13 novembre · 09 h 15 · assigné au Golgot</div>
+        </div>
+
+        <p class="sec-title">Tout le dossier</p>
+        <div class="quick">
+          <a class="qcard" data-go="itineraire" href="#itineraire"><div class="q-ic"><svg><use href="#i-route"/></svg></div><div class="q-t">Itinéraire</div><div class="q-d">10 jours · 6 villes</div></a>
+          <a class="qcard" data-go="billets" href="#billets"><div class="q-ic"><svg><use href="#i-ticket"/></svg></div><div class="q-t">Billets</div><div class="q-d">7 documents</div></a>
+          <a class="qcard" data-go="photos" href="#photos"><div class="q-ic"><svg><use href="#i-photo"/></svg></div><div class="q-t">Photos</div><div class="q-d">Album partagé</div></a>
+          <a class="qcard" data-go="playlist" href="#playlist"><div class="q-ic"><svg><use href="#i-music"/></svg></div><div class="q-t">Playlist</div><div class="q-d">42 titres</div></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- ITINÉRAIRE ---- -->
+    <section class="view" id="view-itineraire">
+      <div class="container">
+        <div class="dossier-head">
+          <div><h1>Itinéraire</h1><div class="sub">13 → 22 nov. · 10 jours · 6 villes</div></div>
+          <div class="hanko jp">旅</div>
+        </div>
+        <div class="timeline">
+          <div class="step done"><div class="dot">1</div><div class="st-top"><span class="st-city">Osaka</span><span class="st-date">Ven 13 nov</span></div><div class="st-acts">Arrivée KIX 14 h · check-in · Dotonbori le soir</div><div class="st-meta"><span class="chip green">Réservé</span><span class="chip">Vol + hôtel</span></div></div>
+          <div class="step done"><div class="dot">2</div><div class="st-top"><span class="st-city">Osaka</span><span class="st-date">Sam 14 nov</span></div><div class="st-acts">Château d'Osaka · Shinsekai · kushikatsu</div><div class="st-meta"><span class="chip green">Planifié</span><span class="chip">Journée libre</span></div></div>
+          <div class="step soon"><div class="dot">3</div><div class="st-top"><span class="st-city">Nara</span><span class="st-date">Dim 15 nov</span></div><div class="st-acts">Les cerfs du parc · Tōdai-ji · Kasuga-taisha</div><div class="st-meta"><span class="chip gold">À confirmer</span><span class="chip">Train 1 h</span></div></div>
+          <div class="step"><div class="dot">4</div><div class="st-top"><span class="st-city">Kyoto</span><span class="st-date">Lun 16 nov</span></div><div class="st-acts">Fushimi Inari à l'aube · Gion au crépuscule</div><div class="st-meta"><span class="chip">Hôtel à booker</span></div></div>
+          <div class="step"><div class="dot">5</div><div class="st-top"><span class="st-city">Kyoto</span><span class="st-date">Mar 17 nov</span></div><div class="st-acts">Arashiyama · Kinkaku-ji · cérémonie du thé</div><div class="st-meta"><span class="chip">Journée chargée</span></div></div>
+          <div class="step"><div class="dot">6</div><div class="st-top"><span class="st-city">Kanazawa</span><span class="st-date">Mer 18 nov</span></div><div class="st-acts">Kenroku-en · marché Omichō · quartier des geishas</div><div class="st-meta"><span class="chip">Optionnel</span></div></div>
+          <div class="step"><div class="dot">7</div><div class="st-top"><span class="st-city">Hakone</span><span class="st-date">Jeu 19 nov</span></div><div class="st-acts">Onsen · ryokan · vue sur le mont Fuji</div><div class="st-meta"><span class="chip gold">Réserver ryokan</span></div></div>
+          <div class="step"><div class="dot">8</div><div class="st-top"><span class="st-city">Fuji · Kawaguchiko</span><span class="st-date">Ven 20 nov</span></div><div class="st-acts">Lacs · randonnée douce · photos du Fuji</div><div class="st-meta"><span class="chip">Sous réserve météo</span></div></div>
+          <div class="step"><div class="dot">9</div><div class="st-top"><span class="st-city">Tokyo</span><span class="st-date">Sam 21 nov</span></div><div class="st-acts">Shibuya · Akihabara · teamLab · izakaya</div><div class="st-meta"><span class="chip">Dernière nuit</span></div></div>
+          <div class="step"><div class="dot">10</div><div class="st-top"><span class="st-city">Tokyo → Maison</span><span class="st-date">Dim 22 nov</span></div><div class="st-acts">Dernier konbini · vol retour 18 h 40</div><div class="st-meta"><span class="chip red">Départ</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- BILLETS ---- -->
+    <section class="view" id="view-billets">
+      <div class="container">
+        <div class="dossier-head">
+          <div><h1>Billets</h1><div class="sub">7 documents · tous les membres</div></div>
+          <div class="hanko jp">券</div>
+        </div>
+        <div class="filters" id="tkFilters">
+          <span class="f on">Tout</span><span class="f">Vol</span><span class="f">Train</span><span class="f">Hôtel</span><span class="f">Activité</span>
+        </div>
+        <div class="ticketlist">
+          <div class="ticket"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Vol aller · AF 276</div><div class="tk-title">Paris CDG → Osaka KIX</div><div class="tk-route">Ven 13 nov · 09 h 15 → 08 h 40 (+1) · Éco · bagage 23 kg</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2601-A</span><span class="tk-assign"><span class="av">LG</span><span class="av">CA</span><span class="av">NI</span></span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket green"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">JR Pass · 7 jours</div><div class="tk-title">Réseau national JR</div><div class="tk-route">Activation à Osaka le 15 nov · Shinkansen illimité</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2601-JR</span><span class="tk-assign"><span class="av">LG</span><span class="av">CA</span><span class="av">NI</span></span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Shinkansen · réservé</div><div class="tk-title">Kyoto → Kanazawa</div><div class="tk-route">Mer 18 nov · 08 h 06 · voiture 5, sièges 12A-12C</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2618-TH</span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket gold"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Hôtel · Osaka</div><div class="tk-title">Namba Grand Stay</div><div class="tk-route">2 nuits · check-in 13 nov, 15 h · 2 chambres</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2601-HO</span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket gold"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Ryokan · Hakone</div><div class="tk-title">Onsen Sakura-an</div><div class="tk-route">1 nuit · demi-pension · bain privé réservé</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2619-HA</span><span class="chip gold">À confirmer</span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Activité · Tokyo</div><div class="tk-title">teamLab Planets</div><div class="tk-route">Sam 21 nov · créneau 11 h 00 · billets horodatés</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2621-TL</span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+          <div class="ticket"><div class="tk-spine"></div><div class="tk-main"><div class="tk-kind">Vol retour · AF 277</div><div class="tk-title">Tokyo HND → Paris CDG</div><div class="tk-route">Dim 22 nov · 18 h 40 · Éco · bagage 23 kg</div><div class="tk-foot"><span class="tk-ref">Réf. TN-2622-B</span></div></div><div class="tk-stub"><div class="tk-qr"></div><span class="tk-ref">QR</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- PHOTOS ---- -->
+    <section class="view" id="view-photos">
+      <div class="container">
+        <div class="dossier-head">
+          <div><h1>Photos</h1><div class="sub">Album partagé · tous les appareils</div></div>
+          <div class="hanko jp">撮</div>
+        </div>
+        <div class="filters" id="phFilters"><span class="f on">Tout</span><span class="f">J1</span><span class="f">J3</span><span class="f">J5</span><span class="f">J9</span></div>
+        <div class="gallery">
+          <div class="shot"><img src="https://picsum.photos/seed/tana-osaka/600/500" alt="Dotonbori"><span class="cap">J1 · Dotonbori</span></div>
+          <div class="shot"><img src="https://picsum.photos/seed/tana-nara/600/500" alt="Les cerfs de Nara"><span class="cap">J3 · Les cerfs</span></div>
+          <div class="shot"><img src="https://picsum.photos/seed/tana-kyoto/600/500" alt="Ruelles de Kyoto"><span class="cap">J4 · Gion</span></div>
+          <div class="shot"><img src="https://picsum.photos/seed/tana-onsen/600/500" alt="Onsen à Hakone"><span class="cap">J7 · Onsen</span></div>
+          <div class="shot"><img src="https://picsum.photos/seed/tana-fuji/600/500" alt="Mont Fuji"><span class="cap">J8 · Le Fuji</span></div>
+          <div class="shot"><img src="https://picsum.photos/seed/tana-tokyo/600/500" alt="Shibuya la nuit"><span class="cap">J9 · Shibuya</span></div>
+        </div>
+        <div class="upload"><svg><use href="#i-plus"/></svg> Ajouter des photos</div>
+      </div>
+    </section>
+
+    <!-- ---- CARTE ---- -->
+    <section class="view" id="view-carte">
+      <div class="container">
+        <div class="dossier-head">
+          <div><h1>Carte du voyage</h1><div class="sub">Le carnet façon Polarsteps</div></div>
+          <div class="hanko jp">図</div>
+        </div>
+        <div class="mapwrap">
+          <div class="map-legend">Parcours Tana · 6 étapes</div>
+          <svg viewBox="0 0 348 380" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0">
+            <defs><pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#b9a980" stroke-width=".6" opacity=".5"/></pattern></defs>
+            <rect width="348" height="380" fill="url(#grid)"/>
+            <path d="M40 330 C90 300 70 250 120 210 C170 170 150 120 210 100 C250 88 280 70 305 52" fill="none" stroke="#181410" stroke-width="2" stroke-dasharray="6 6" opacity=".5"/>
+            <g font-family="Playfair Display, serif" font-size="11" fill="#181410">
+              <circle cx="55" cy="330" r="7" fill="#b3121b" stroke="#e9dfc6" stroke-width="2"/><text x="70" y="334">Osaka</text>
+              <circle cx="105" cy="300" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/><text x="118" y="304">Nara</text>
+              <circle cx="120" cy="210" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/><text x="133" y="214">Kyoto</text>
+              <circle cx="175" cy="150" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/><text x="188" y="154">Kanazawa</text>
+              <circle cx="212" cy="110" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/><text x="225" y="114">Hakone</text>
+              <circle cx="252" cy="74" r="5" fill="#181410" stroke="#e9dfc6" stroke-width="2"/><text x="265" y="78">Fuji</text>
+              <circle cx="300" cy="52" r="6" fill="#b3121b" stroke="#e9dfc6" stroke-width="2"/><text x="255" y="40">Tokyo</text>
+            </g>
+          </svg>
+          <div class="map-scale"><i></i>0 — 150 km</div>
+        </div>
+        <div class="stops">
+          <div class="stopcard"><img src="https://picsum.photos/seed/tana-s1/300/200" alt="Osaka"><div class="sc-pad"><div class="sc-city">Osaka</div><div class="sc-date">J1 — 13 nov</div><div class="sc-n">Point de départ</div></div></div>
+          <div class="stopcard"><img src="https://picsum.photos/seed/tana-s2/300/200" alt="Nara"><div class="sc-pad"><div class="sc-city">Nara</div><div class="sc-date">J3 — 15 nov</div><div class="sc-n">Les cerfs</div></div></div>
+          <div class="stopcard"><img src="https://picsum.photos/seed/tana-s3/300/200" alt="Kyoto"><div class="sc-pad"><div class="sc-city">Kyoto</div><div class="sc-date">J4 — 16 nov</div><div class="sc-n">Temples</div></div></div>
+          <div class="stopcard"><img src="https://picsum.photos/seed/tana-s4/300/200" alt="Hakone"><div class="sc-pad"><div class="sc-city">Hakone</div><div class="sc-date">J7 — 19 nov</div><div class="sc-n">Onsen</div></div></div>
+          <div class="stopcard"><img src="https://picsum.photos/seed/tana-s5/300/200" alt="Tokyo"><div class="sc-pad"><div class="sc-city">Tokyo</div><div class="sc-date">J9 — 21 nov</div><div class="sc-n">Final</div></div></div>
+        </div>
+        <p class="sec-title">Journal du voyage</p>
+        <div class="feed">
+          <div class="feeditem"><div class="fi-top"><span class="fi-who">Le Golgot</span><span class="fi-when">J1 · Dotonbori</span></div><div class="fi-what">« Premier soir : on a commandé au hasard. Trois plats parfaits. Le Japon pardonne tout. »</div></div>
+          <div class="feeditem" style="border-left-color:var(--red)"><div class="fi-top"><span class="fi-who" style="color:var(--red)">Cass</span><span class="fi-when">J3 · Nara</span></div><div class="fi-what">« Nico a tenté de nourrir un cerf. Le cerf a pris le cornet entier. Personne n'a été blessé. Cette fois. »</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- PLAYLIST ---- -->
+    <section class="view" id="view-playlist">
+      <div class="container">
+        <div class="dossier-head">
+          <div><h1>Playlist partagée</h1><div class="sub">La bande-son du groupe Tana</div></div>
+          <div class="hanko jp">音</div>
+        </div>
+        <div class="pl-hero">
+          <div class="pl-cover"><span class="c1 jp">旅</span><span class="c2">TANA</span></div>
+          <div class="pl-meta"><div class="pl-kind">Playlist collaborative</div><h2>Tana Roadtrip</h2><div class="pl-by">42 titres · 2 h 47<br>3 contributeurs</div></div>
+        </div>
+        <div class="pl-actions">
+          <a class="btn primary" href="https://open.spotify.com" target="_blank" rel="noopener"><svg><use href="#i-play"/></svg>Lecture</a>
+          <button class="btn"><svg><use href="#i-save"/></svg>Suivre</button>
+        </div>
+        <p class="sec-title">En boucle dans le Shinkansen</p>
+        <div class="track"><span class="tr-eq"><i></i><i></i><i></i></span><div class="tr-i"><div class="tr-t">Plastic Love</div><div class="tr-a">Mariya Takeuchi</div></div><span class="tr-d">4:56</span></div>
+        <div class="track"><span class="tr-n">2</span><div class="tr-i"><div class="tr-t">Tokyo Drift</div><div class="tr-a">Teriyaki Boyz</div></div><span class="tr-d">4:15</span></div>
+        <div class="track"><span class="tr-n">3</span><div class="tr-i"><div class="tr-t">Stay With Me</div><div class="tr-a">Miki Matsubara</div></div><span class="tr-d">5:12</span></div>
+        <div class="track"><span class="tr-n">4</span><div class="tr-i"><div class="tr-t">Shin Sekai</div><div class="tr-a">Fujii Kaze</div></div><span class="tr-d">3:48</span></div>
+        <div class="track"><span class="tr-n">5</span><div class="tr-i"><div class="tr-t">Nuit de Shibuya</div><div class="tr-a">Tana Sounds</div></div><span class="tr-d">3:21</span></div>
+        <div class="track"><span class="tr-n">6</span><div class="tr-i"><div class="tr-t">Kaze no Tani</div><div class="tr-a">Joe Hisaishi</div></div><span class="tr-d">4:02</span></div>
+        <p class="sec-title">Qui a ajouté quoi</p>
+        <div class="members"><div class="avatars"><div class="av">LG</div><div class="av">CA</div><div class="av">NI</div></div><div class="m-lab">Le Golgot · 19 — Cass · 14 — Nico · 9</div></div>
+      </div>
+    </section>
+
+    <!-- ---- ONGLETS MOBILES ---- -->
+    <nav class="tabbar">
+      <a class="tab" data-go="accueil" href="#accueil"><svg><use href="#i-home"/></svg>Accueil</a>
+      <a class="tab" data-go="itineraire" href="#itineraire"><svg><use href="#i-route"/></svg>Route</a>
+      <a class="tab" data-go="billets" href="#billets"><svg><use href="#i-ticket"/></svg>Billets</a>
+      <a class="tab" data-go="photos" href="#photos"><svg><use href="#i-photo"/></svg>Photos</a>
+      <a class="tab" data-go="carte" href="#carte"><svg><use href="#i-map"/></svg>Carte</a>
+      <a class="tab" data-go="playlist" href="#playlist"><svg><use href="#i-music"/></svg>Zik</a>
+    </nav>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFAULT = "accueil";
+  var views = ["accueil","itineraire","billets","photos","carte","playlist"];
+
+  function show(id){
+    if(views.indexOf(id) === -1) id = DEFAULT;
+    views.forEach(function(v){
+      var el = document.getElementById("view-" + v);
+      if(el) el.classList.toggle("active", v === id);
+    });
+    document.querySelectorAll("[data-go]").forEach(function(a){
+      a.classList.toggle("active", a.getAttribute("data-go") === id);
+    });
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  }
+
+  function fromHash(){
+    var h = (location.hash || "").replace("#","");
+    show(h || DEFAULT);
+  }
+
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
+
+  // filtres visuels (onglets Tout/Vol/Train...) — purement décoratif pour l'instant
+  document.querySelectorAll(".filters").forEach(function(box){
+    box.addEventListener("click", function(e){
+      var f = e.target.closest(".f");
+      if(!f) return;
+      box.querySelectorAll(".f").forEach(function(x){ x.classList.remove("on"); });
+      f.classList.add("on");
+    });
+  });
+
+  // Service worker (installation / hors-ligne)
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
